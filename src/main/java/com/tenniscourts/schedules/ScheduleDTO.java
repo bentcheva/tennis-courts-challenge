@@ -19,11 +19,11 @@ public class ScheduleDTO {
     @NotNull
     private Long tennisCourtId;
 
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.S")
     @NotNull
     private LocalDateTime startDateTime;
 
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.S")
     private LocalDateTime endDateTime;
 
 }
