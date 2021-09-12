@@ -1,6 +1,7 @@
 package com.tenniscourts.schedules;
 
 import com.tenniscourts.config.BaseRestController;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+@Api("Schedules")
 @AllArgsConstructor
 @RequestMapping("/schedules")
 @RestController

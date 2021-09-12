@@ -17,7 +17,13 @@ public class ReservationService {
     private final ReservationMapper reservationMapper;
 
     public ReservationDTO bookReservation(CreateReservationRequestDTO createReservationRequestDTO) {
-        throw new UnsupportedOperationException();
+        Reservation reservation = reservationMapper.map(createReservationRequestDTO);
+        reservation.setValue(new BigDecimal(ReservationDefaults.RESERVATION_VALUE.getValue()));
+        reservation.setReservationStatus(ReservationStatus.READY_TO_PLAY);
+        // upon booking the reservation qualifies for full refund, so setting the refund value to the reservation value.
+        reservation.setRefundValue(reservation.getValue());
+        // persist the reservation and then map in order to return the DTO
+        return reservationMapper.map(reservationRepository.save(reservation));
     }
 
     public ReservationDTO findReservation(Long reservationId) {

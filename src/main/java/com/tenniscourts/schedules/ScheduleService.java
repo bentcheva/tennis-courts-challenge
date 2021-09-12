@@ -32,8 +32,8 @@ public class ScheduleService {
         Schedule schedule = new Schedule();
         schedule.setTennisCourt(tennisCourt);
         schedule.setStartDateTime(createScheduleRequestDTO.getStartDateTime());
-        // assuming that a standard tennis match continues for 3 hours, so schedule the court for 3 hours
-        schedule.setEndDateTime(createScheduleRequestDTO.getStartDateTime().plusHours(3));
+        // as per the assumptions guests can play for exactly one hour, so setting the schedule duration to 1
+        schedule.setEndDateTime(createScheduleRequestDTO.getStartDateTime().plusHours(1));
         return scheduleMapper.map(scheduleRepository.save(schedule));
     }
 
