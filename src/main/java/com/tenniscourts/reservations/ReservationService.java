@@ -78,18 +78,18 @@ public class ReservationService {
         }
         // penalty band 25%
         // 75% refund when cancellation/rescheduling happens >= 12hours and <= 23 h 59 mins from the start
-        if (minutes >= TimeUnit.HOURS.toMinutes(12) && minutes <= (TimeUnit.HOURS.toMinutes(23) + 59)) {
+        if (minutes >= TimeUnit.HOURS.toMinutes(12) && minutes < TimeUnit.HOURS.toMinutes(24)) {
             refundValue = getReservationRefundByPenaltyBands(reservation, ReservationDefaults.RESERVATION_REFUND_75.getValue());
         }
         // penalty band 50%
         // 50% refund when cancellation/rescheduling happens >= 2hours and <= 11 h 59 mins from the start
-        if (minutes >= TimeUnit.HOURS.toMinutes(2) && minutes <= (TimeUnit.HOURS.toMinutes(11) + 59)) {
+        if (minutes >= TimeUnit.HOURS.toMinutes(2) && minutes < TimeUnit.HOURS.toMinutes(12)) {
             refundValue = getReservationRefundByPenaltyBands(reservation, ReservationDefaults.RESERVATION_REFUND_50.getValue());
         }
 
         // penalty band 75%
         // 50% refund when cancellation/rescheduling happens >= 1 min and <= 2 hours from the start
-        if (minutes >= 1 && minutes <= TimeUnit.HOURS.toMinutes(2)) {
+        if (minutes >= 1 && minutes < TimeUnit.HOURS.toMinutes(2)) {
             refundValue = getReservationRefundByPenaltyBands(reservation, ReservationDefaults.RESERVATION_REFUND_25.getValue());
         }
         return refundValue;
