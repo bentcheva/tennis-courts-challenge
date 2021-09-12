@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.Path;
+
 @Api("Reservations")
 @AllArgsConstructor
 @RestController
@@ -30,11 +32,19 @@ public class ReservationController extends BaseRestController {
         return ResponseEntity.ok(reservationService.findReservation(reservationId));
     }
 
-    public ResponseEntity<ReservationDTO> cancelReservation(Long reservationId) {
+    @ApiOperation(value = "Cancel reservation by reservation id")
+    @PutMapping("/{reservationId}")
+    public ResponseEntity<ReservationDTO> cancelReservation(@ApiParam(name = "reservationId", value = "Reservation id", required = true)
+                                                            @PathVariable Long reservationId) {
         return ResponseEntity.ok(reservationService.cancelReservation(reservationId));
     }
 
-    public ResponseEntity<ReservationDTO> rescheduleReservation(Long reservationId, Long scheduleId) {
+    @ApiOperation(value = "Reschedule reservation by reservation id and schedule id")
+    @PutMapping
+    public ResponseEntity<ReservationDTO> rescheduleReservation(@ApiParam(name = "reservationId", value = "Reservation id", required = true)
+                                                                @RequestParam("reservationId") Long reservationId,
+                                                                @ApiParam(name = "scheduleId", value = "Schedule id", required = true)
+                                                                @RequestParam("scheduleId") Long scheduleId) {
         return ResponseEntity.ok(reservationService.rescheduleReservation(reservationId, scheduleId));
     }
 }

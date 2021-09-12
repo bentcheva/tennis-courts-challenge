@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @AllArgsConstructor
@@ -33,16 +34,16 @@ public class ReservationService {
     }
 
     public ReservationDTO cancelReservation(Long reservationId) {
-        return reservationMapper.map(this.cancel(reservationId));
+        return reservationMapper.map(this.cancel(reservationId, ReservationStatus.CANCELLED));
     }
 
-    private Reservation cancel(Long reservationId) {
+    private Reservation cancel(Long reservationId, ReservationStatus reservationStatus) {
         return reservationRepository.findById(reservationId).map(reservation -> {
 
             this.validateCancellation(reservation);
 
             BigDecimal refundValue = getRefundValue(reservation);
-            return this.updateReservation(reservation, refundValue, ReservationStatus.CANCELLED);
+            return this.updateReservation(reservation, refundValue, reservationStatus);
 
         }).orElseThrow(() -> {
             throw new EntityNotFoundException("Reservation not found.");
@@ -68,21 +69,40 @@ public class ReservationService {
     }
 
     public BigDecimal getRefundValue(Reservation reservation) {
-        long hours = ChronoUnit.HOURS.between(LocalDateTime.now(), reservation.getSchedule().getStartDateTime());
+        long minutes = ChronoUnit.MINUTES.between(LocalDateTime.now(), reservation.getSchedule().getStartDateTime());
+        BigDecimal refundValue = BigDecimal.ZERO;
 
-        if (hours >= 24) {
+        // full refund when cancellation/rescheduling happens more than 24hours from the start
+        if (minutes >= TimeUnit.HOURS.toMinutes(24)) {
             return reservation.getValue();
         }
+        // penalty band 25%
+        // 75% refund when cancellation/rescheduling happens >= 12hours and <= 23 h 59 mins from the start
+        if (minutes >= TimeUnit.HOURS.toMinutes(12) && minutes <= (TimeUnit.HOURS.toMinutes(23) + 59)) {
+            refundValue = getReservationRefundByPenaltyBands(reservation, ReservationDefaults.RESERVATION_REFUND_75.getValue());
+        }
+        // penalty band 50%
+        // 50% refund when cancellation/rescheduling happens >= 2hours and <= 11 h 59 mins from the start
+        if (minutes >= TimeUnit.HOURS.toMinutes(2) && minutes <= (TimeUnit.HOURS.toMinutes(11) + 59)) {
+            refundValue = getReservationRefundByPenaltyBands(reservation, ReservationDefaults.RESERVATION_REFUND_50.getValue());
+        }
 
-        return BigDecimal.ZERO;
+        // penalty band 75%
+        // 50% refund when cancellation/rescheduling happens >= 1 min and <= 2 hours from the start
+        if (minutes >= 1 && minutes <= TimeUnit.HOURS.toMinutes(2)) {
+            refundValue = getReservationRefundByPenaltyBands(reservation, ReservationDefaults.RESERVATION_REFUND_25.getValue());
+        }
+        return refundValue;
     }
 
     /*TODO: This method actually not fully working, find a way to fix the issue when it's throwing the error:
             "Cannot reschedule to the same slot.*/
     public ReservationDTO rescheduleReservation(Long previousReservationId, Long scheduleId) {
-        Reservation previousReservation = cancel(previousReservationId);
+        Reservation previousReservation = cancel(previousReservationId, ReservationStatus.RESCHEDULED);
 
         if (scheduleId.equals(previousReservation.getSchedule().getId())) {
+            // change the status of the reservation back to ready to play
+            previousReservation.setReservationStatus(ReservationStatus.READY_TO_PLAY);
             throw new IllegalArgumentException("Cannot reschedule to the same slot.");
         }
 
@@ -95,5 +115,10 @@ public class ReservationService {
                 .build());
         newReservation.setPreviousReservation(reservationMapper.map(previousReservation));
         return newReservation;
+    }
+
+    private BigDecimal getReservationRefundByPenaltyBands(Reservation reservation, int penaltyPercent) {
+        long refundValue = reservation.getValue().longValue() * penaltyPercent / 100;
+        return new BigDecimal(refundValue);
     }
 }
