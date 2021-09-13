@@ -42,7 +42,7 @@ public class ReservationService {
 
             this.validateCancellation(reservation);
 
-            BigDecimal refundValue = getRefundValue(reservation);
+            BigDecimal refundValue = getRefundValue(reservation, LocalDateTime.now());
             return this.updateReservation(reservation, refundValue, reservationStatus);
 
         }).orElseThrow(() -> {
@@ -68,13 +68,17 @@ public class ReservationService {
         }
     }
 
-    public BigDecimal getRefundValue(Reservation reservation) {
-        long minutes = ChronoUnit.MINUTES.between(LocalDateTime.now(), reservation.getSchedule().getStartDateTime());
+    /*
+        Refactored the method signature to make the method "stateless" in terms of the time snapshot provided by LocalDateTime.now().
+        This makes the unit testing of the method time independent.
+     */
+    public BigDecimal getRefundValue(Reservation reservation, LocalDateTime localDateTime) {
+        long minutes = ChronoUnit.MINUTES.between(localDateTime, reservation.getSchedule().getStartDateTime());
         BigDecimal refundValue = BigDecimal.ZERO;
 
-        // full refund when cancellation/rescheduling happens more than 24hours from the start
+        // full refund when cancellation/rescheduling happens more than 24 hours from the start
         if (minutes >= TimeUnit.HOURS.toMinutes(24)) {
-            return reservation.getValue();
+            refundValue = reservation.getValue();
         }
         // penalty band 25%
         // 75% refund when cancellation/rescheduling happens >= 12hours and <= 23 h 59 mins from the start
@@ -88,20 +92,18 @@ public class ReservationService {
         }
 
         // penalty band 75%
-        // 50% refund when cancellation/rescheduling happens >= 1 min and <= 2 hours from the start
+        // 25% refund when cancellation/rescheduling happens >= 1 min and <= 2 hours from the start
         if (minutes >= 1 && minutes < TimeUnit.HOURS.toMinutes(2)) {
             refundValue = getReservationRefundByPenaltyBands(reservation, ReservationDefaults.RESERVATION_REFUND_25.getValue());
         }
         return refundValue;
     }
 
-    /*TODO: This method actually not fully working, find a way to fix the issue when it's throwing the error:
-            "Cannot reschedule to the same slot.*/
     public ReservationDTO rescheduleReservation(Long previousReservationId, Long scheduleId) {
         Reservation previousReservation = cancel(previousReservationId, ReservationStatus.RESCHEDULED);
 
         if (scheduleId.equals(previousReservation.getSchedule().getId())) {
-            // change the status of the reservation back to ready to play
+            // revert the status of the reservation back to ready to play
             previousReservation.setReservationStatus(ReservationStatus.READY_TO_PLAY);
             throw new IllegalArgumentException("Cannot reschedule to the same slot.");
         }

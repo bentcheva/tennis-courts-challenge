@@ -23,7 +23,8 @@ public class GuestController extends BaseRestController {
 
     @ApiOperation(value = "Add new guest")
     @PostMapping
-    public ResponseEntity<Void> addGuest(@ApiParam(name = "createGuestRequest", value = "GuestDTO model to add guest", required = true) @RequestBody GuestDTO createGuestRequest) {
+    public ResponseEntity<Void> addGuest(@ApiParam(name = "createGuestRequest", value = "GuestDTO model to add guest", required = true)
+                                         @RequestBody GuestDTO createGuestRequest) {
         return ResponseEntity.created(locationByEntity(guestService.addGuest(createGuestRequest).getId())).build();
     }
 
@@ -35,26 +36,30 @@ public class GuestController extends BaseRestController {
 
     @ApiOperation(value = "Get guest by guest Id")
     @GetMapping("/{guestId}")
-    public ResponseEntity<GuestDTO> findGuestById(@ApiParam(name = "guestId", example = "2", value = "Guest id", required = true) @PathVariable Long guestId) {
+    public ResponseEntity<GuestDTO> findGuestById(@ApiParam(name = "guestId", example = "2", value = "Guest id", required = true)
+                                                  @PathVariable Long guestId) {
         return ResponseEntity.ok(guestService.findById(guestId));
     }
 
     @ApiOperation(value = "Get guest by name")
     @GetMapping("/byname/{name}")
-    public ResponseEntity<List<GuestDTO>> findGuestByName(@ApiParam(name = "name", example = "Rafael Nadal", value = "Guest name", required = true) @PathVariable String name) {
+    public ResponseEntity<List<GuestDTO>> findGuestByName(@ApiParam(name = "name", example = "Rafael Nadal", value = "Guest name", required = true)
+                                                          @PathVariable String name) {
         return ResponseEntity.ok(guestService.findByName(name));
     }
 
     @ApiOperation(value = "Delete guest by guest Id")
     @DeleteMapping("/{guestId}")
-    public ResponseEntity<Void> deleteGuest(@ApiParam(name = "guestId", example = "2", value = "Guest id", required = true) @PathVariable long guestId) {
+    public ResponseEntity<Void> deleteGuest(@ApiParam(name = "guestId", example = "2", value = "Guest id", required = true)
+                                            @PathVariable long guestId) {
         guestService.deleteGuest(guestId);
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
     @ApiOperation(value = "Update guest")
     @PutMapping
-    public ResponseEntity<GuestDTO> updateGuest(@ApiParam(name = "guestToBeUpdated", value = "GuestDTO model to update guest", required = true)@RequestBody GuestDTO guestToBeUpdated) {
+    public ResponseEntity<GuestDTO> updateGuest(@ApiParam(name = "guestToBeUpdated", value = "GuestDTO model to update guest", required = true)
+                                                @RequestBody GuestDTO guestToBeUpdated) {
         return ResponseEntity.ok(guestService.updateGuest(guestToBeUpdated));
     }
 }

@@ -18,19 +18,22 @@ public class TennisCourtController extends BaseRestController {
 
     @ApiOperation(value = "Add tennis court")
     @PostMapping
-    public ResponseEntity<Void> addTennisCourt(@ApiParam(name = "tennisCourtDTO", value = "TennisCourt POJO DTO", required = true) @RequestBody TennisCourtDTO tennisCourtDTO) {
+    public ResponseEntity<Void> addTennisCourt(@ApiParam(name = "tennisCourtDTO", value = "TennisCourt POJO DTO", required = true)
+                                               @RequestBody TennisCourtDTO tennisCourtDTO) {
         return ResponseEntity.created(locationByEntity(tennisCourtService.addTennisCourt(tennisCourtDTO).getId())).build();
     }
 
     @ApiOperation(value = "Find tennis court by id")
     @GetMapping("/{tennisCourtId}")
-    public ResponseEntity<TennisCourtDTO> findTennisCourtById(@ApiParam(name = "tennisCourtId", value = "Tennis court id", required = true) @PathVariable Long tennisCourtId) {
+    public ResponseEntity<TennisCourtDTO> findTennisCourtById(@ApiParam(name = "tennisCourtId", value = "Tennis court id", required = true)
+                                                              @PathVariable Long tennisCourtId) {
         return ResponseEntity.ok(tennisCourtService.findTennisCourtById(tennisCourtId));
     }
 
     @ApiOperation(value = "Find tennis court with schedules by tennis court Id")
     @GetMapping("/withschedules/{tennisCourtId}")
-    public ResponseEntity<TennisCourtDTO> findTennisCourtWithSchedulesById(@ApiParam(name = "tennisCourtId", value = "Tennis court id", required = true) @PathVariable Long tennisCourtId) {
+    public ResponseEntity<TennisCourtDTO> findTennisCourtWithSchedulesById(@ApiParam(name = "tennisCourtId", value = "Tennis court id", required = true)
+                                                                           @PathVariable Long tennisCourtId) {
         return ResponseEntity.ok(tennisCourtService.findTennisCourtWithSchedulesById(tennisCourtId));
     }
 }

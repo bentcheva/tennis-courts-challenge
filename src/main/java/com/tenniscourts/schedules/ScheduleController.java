@@ -34,7 +34,8 @@ public class ScheduleController extends BaseRestController {
 
     @ApiOperation(value = "Find schedules by Id")
     @GetMapping("/bydates")
-    public ResponseEntity<List<ScheduleDTO>> findSchedulesByDates(@ApiParam(name = "createGuestRequest", value = "GuestDTO model to add guest", required = true) @RequestParam("startDate")
+    public ResponseEntity<List<ScheduleDTO>> findSchedulesByDates(@ApiParam(name = "createGuestRequest", value = "GuestDTO model to add guest", required = true)
+                                                                  @RequestParam("startDate")
                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
                                                                   @RequestParam("endDate")
                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate) {
@@ -43,7 +44,8 @@ public class ScheduleController extends BaseRestController {
 
     @ApiOperation(value = "Find schedule by schedule Id")
     @GetMapping("/{scheduleId}")
-    public ResponseEntity<ScheduleDTO> findByScheduleId(@ApiParam(name ="scheduleId", value = "Schedule id", required = true) @PathVariable Long scheduleId) {
+    public ResponseEntity<ScheduleDTO> findByScheduleId(@ApiParam(name = "scheduleId", value = "Schedule id", required = true)
+                                                        @PathVariable Long scheduleId) {
         return ResponseEntity.ok(scheduleService.findSchedule(scheduleId));
     }
 }
