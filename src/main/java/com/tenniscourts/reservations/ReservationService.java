@@ -100,11 +100,10 @@ public class ReservationService {
     }
 
     public ReservationDTO rescheduleReservation(Long previousReservationId, Long scheduleId) {
-        Reservation previousReservation = cancel(previousReservationId, ReservationStatus.RESCHEDULED);
+        // do not perform status update yet, just update RefundValue and Value based on the time of reschedule
+        Reservation previousReservation = cancel(previousReservationId, ReservationStatus.READY_TO_PLAY);
 
         if (scheduleId.equals(previousReservation.getSchedule().getId())) {
-            // revert the status of the reservation back to ready to play
-            previousReservation.setReservationStatus(ReservationStatus.READY_TO_PLAY);
             throw new IllegalArgumentException("Cannot reschedule to the same slot.");
         }
 

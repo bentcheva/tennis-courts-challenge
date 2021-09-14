@@ -43,7 +43,7 @@ public class ReservationController extends BaseRestController {
     @PutMapping
     public ResponseEntity<ReservationDTO> rescheduleReservation(@ApiParam(name = "reservationId", example = "1", value = "Reservation id", required = true)
                                                                 @RequestParam("reservationId") Long reservationId,
-                                                                @ApiParam(name = "scheduleId", example = "1", value = "Schedule id", required = true)
+                                                                @ApiParam(name = "scheduleId", example = "1", value = "New schedule id", required = true)
                                                                 @RequestParam("scheduleId") Long scheduleId) {
         return ResponseEntity.ok(reservationService.rescheduleReservation(reservationId, scheduleId));
     }
