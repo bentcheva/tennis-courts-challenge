@@ -27,23 +27,23 @@ public class ReservationController extends BaseRestController {
 
     @ApiOperation(value = "Find reservation by reservation id")
     @GetMapping("/{reservationId}")
-    public ResponseEntity<ReservationDTO> findReservation(@ApiParam(name = "reservationId", value = "Reservation id", required = true)
+    public ResponseEntity<ReservationDTO> findReservation(@ApiParam(name = "reservationId", example = "1", value = "Reservation id", required = true)
                                                           @PathVariable Long reservationId) {
         return ResponseEntity.ok(reservationService.findReservation(reservationId));
     }
 
     @ApiOperation(value = "Cancel reservation by reservation id")
     @PutMapping("/{reservationId}")
-    public ResponseEntity<ReservationDTO> cancelReservation(@ApiParam(name = "reservationId", value = "Reservation id", required = true)
+    public ResponseEntity<ReservationDTO> cancelReservation(@ApiParam(name = "reservationId", example = "1", value = "Reservation id", required = true)
                                                             @PathVariable Long reservationId) {
         return ResponseEntity.ok(reservationService.cancelReservation(reservationId));
     }
 
     @ApiOperation(value = "Reschedule reservation by reservation id and schedule id")
     @PutMapping
-    public ResponseEntity<ReservationDTO> rescheduleReservation(@ApiParam(name = "reservationId", value = "Reservation id", required = true)
+    public ResponseEntity<ReservationDTO> rescheduleReservation(@ApiParam(name = "reservationId", example = "1", value = "Reservation id", required = true)
                                                                 @RequestParam("reservationId") Long reservationId,
-                                                                @ApiParam(name = "scheduleId", value = "Schedule id", required = true)
+                                                                @ApiParam(name = "scheduleId", example = "1", value = "Schedule id", required = true)
                                                                 @RequestParam("scheduleId") Long scheduleId) {
         return ResponseEntity.ok(reservationService.rescheduleReservation(reservationId, scheduleId));
     }

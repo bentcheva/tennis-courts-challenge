@@ -21,14 +21,9 @@ public class ScheduleService {
     public final TennisCourtRepository tennisCourtRepository;
 
     public ScheduleDTO addSchedule(CreateScheduleRequestDTO createScheduleRequestDTO) {
-        Optional<TennisCourt> result = tennisCourtRepository.findById(createScheduleRequestDTO.getTennisCourtId());
-        TennisCourt tennisCourt = null;
-        if( result.isPresent()) {
-            tennisCourt = result.get();
-        } else {
-            // throw exception that tennis court with id does not exist
-            throw new EntityNotFoundException("Tennis court not found.");
-        }
+        TennisCourt tennisCourt = tennisCourtRepository.findById(createScheduleRequestDTO.getTennisCourtId()).orElseThrow(() -> {
+            throw new EntityNotFoundException("TennisCourt not found.");
+        });
         Schedule schedule = new Schedule();
         schedule.setTennisCourt(tennisCourt);
         schedule.setStartDateTime(createScheduleRequestDTO.getStartDateTime());

@@ -18,7 +18,7 @@ public class TennisCourtController extends BaseRestController {
 
     @ApiOperation(value = "Add tennis court")
     @PostMapping
-    public ResponseEntity<Void> addTennisCourt(@ApiParam(name = "tennisCourtDTO", value = "TennisCourt POJO DTO", required = true)
+    public ResponseEntity<Void> addTennisCourt(@ApiParam(name = "tennisCourtDTO", value = "TennisCourt DTO", required = true)
                                                @RequestBody TennisCourtDTO tennisCourtDTO) {
         return ResponseEntity.created(locationByEntity(tennisCourtService.addTennisCourt(tennisCourtDTO).getId())).build();
     }

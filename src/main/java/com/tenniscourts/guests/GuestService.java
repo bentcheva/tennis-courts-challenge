@@ -60,15 +60,8 @@ public class GuestService {
 
     // Helper method to validate if guest with guestId exists
     private Guest isGuestPresent(GuestRepository guestRepository, Long guestId) throws EntityNotFoundException {
-        Optional<Guest> result = guestRepository.findById(guestId);
-        Guest guest = null;
-        // sanity check that the guest exists
-        if (result.isPresent()) {
-            guest = result.get();
-        } else {
-            // throw exception if a guest with id does not exist
+        return guestRepository.findById(guestId).orElseThrow(() -> {
             throw new EntityNotFoundException(MessageFormat.format("Guest with id {0} not found.", guestId));
-        }
-        return guest;
+        });
     }
 }
