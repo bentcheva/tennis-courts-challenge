@@ -92,7 +92,7 @@ public class ReservationService {
         }
 
         // penalty band 75%
-        // 25% refund when cancellation/rescheduling happens >= 1 min and <= 2 hours from the start
+        // 25% refund when cancellation/rescheduling happens >= 1 min and < 2 hours from the start
         if (minutes >= 1 && minutes < TimeUnit.HOURS.toMinutes(2)) {
             refundValue = getReservationRefundByPenaltyBands(reservation, ReservationDefaults.RESERVATION_REFUND_25.getValue());
         }
